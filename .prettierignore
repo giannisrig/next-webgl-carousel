@@ -1,0 +1,19 @@
+# Ignore all dotfiles
+.*
+
+# Ignore Readme
+README.md
+
+# Ignore build directories
+public/
+
+# Ignore Node.js modules
+node_modules/
+
+# Ignore Styles
+src/styles
+
+# Ignore Config files
+next.config.js
+postcss.config.js
+tailwind.config.js

@@ -1,0 +1,27 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "prettier"
+  ],
+  "extends": [
+    "next",
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "globals": {
+    "React": "readonly" //React will always be defined even if we don't specifically import it
+  },
+  "rules": {
+    "no-unused-vars": [0, { "args": "after-used", "argsIgnorePattern": "^_" }], //set it to 1 if you want to enable the rule for the unused vars in your app
+    "@typescript-eslint/no-explicit-any": "off"
+  }
+}

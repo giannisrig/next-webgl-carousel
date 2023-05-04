@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 21, 18, 39;
+    --background-end-rgb: 54, 30, 46;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(269.74deg, #151227 0.01%, #361E2E 185.95%);
+}
+
+.next-logo {
+  &::after {
+    background: radial-gradient(50% 50% at 50% 50%, #F73693 0%, rgba(21, 18, 39, 0) 100%);
+  }
+}
