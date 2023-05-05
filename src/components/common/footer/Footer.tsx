@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <>
       <Overlay />
-      <footer className="flex w-full flex-col border-t-2 border-bleached">
+      <footer className="flex w-full flex-col border-t-2 border-basicGray">
         <MainFooter />
         <SubFooter />
       </footer>

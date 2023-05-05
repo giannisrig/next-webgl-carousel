@@ -33,8 +33,8 @@ module.exports = {
       // => @media (min-width: 1536px) { ... }
     },
     fontFamily: {
-      primary: ['var(--font-noto-sans-mono)'],
-      secondary: ['var(--font-grava)'],
+      primary: ['var(--font-primary)'],
+      secondary: ['var(--font-secondary)'],
     },
     extend: {
       colors: {
@@ -45,6 +45,8 @@ module.exports = {
         'amethyst': '#AE94BD',
         'mirage': '#1D1528',
         'bleached': '#302440',
+        'silver': '#acacac',
+        'basicGray': '#eee',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -71,6 +73,14 @@ module.exports = {
         '150px': '150px',
         '160px': '160px',
       },
+      height: {
+        '50vh': '50vh',
+      },
+      zIndex: {
+        '1':'1',
+        '2':'2',
+        '3':'3',
+      }
     },
   },
   plugins: [],

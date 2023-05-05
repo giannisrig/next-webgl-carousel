@@ -1,5 +1,5 @@
 import localFont from "next/font/local";
-import { Noto_Sans_Mono } from "next/font/google";
+import { Unna } from "next/font/google";
 import { NextFontWithVariable } from "next/dist/compiled/@next/font";
 
 interface AppFonts {
@@ -8,9 +8,10 @@ interface AppFonts {
 }
 
 //load the Google fonts
-const noto_sans_mono = Noto_Sans_Mono({
+const unna = Unna({
   subsets: ["latin"],
-  variable: "--font-noto-sans-mono",
+  weight: ["400", "700"],
+  variable: "--font-primary",
 });
 
 //load the local fonts
@@ -32,12 +33,12 @@ const grava = localFont({
       style: "normal",
     },
   ],
-  variable: "--font-grava",
+  variable: "--font-secondary",
 });
 
 //define the fonts object
 const fonts: AppFonts = {
-  primary: noto_sans_mono,
+  primary: unna,
   secondary: grava,
 };
 

@@ -16,13 +16,26 @@
   }
 }
 
+@layer base {
+  .font-outline-2 {
+    -webkit-text-stroke: 2px #acacac;
+  }
+  .font-outline-4 {
+    -webkit-text-stroke: 4px #acacac;
+  }
+}
+
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(269.74deg, #151227 0.01%, #361E2E 185.95%);
+  color: #000;
+  background: #fff
 }
 
 .next-logo {
   &::after {
     background: radial-gradient(50% 50% at 50% 50%, #F73693 0%, rgba(21, 18, 39, 0) 100%);
   }
+}
+
+canvas {
+  height: 100%;
 }
