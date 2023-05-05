@@ -37,7 +37,7 @@ export default function Home() {
         {/*<h3 className="font-outline-2 w-max text-9xl font-bold text-transparent">Redefine your Style</h3>*/}
         <div />
         <div className="absolute top-120px flex w-full  items-center gap-10px px-15px">
-          <h3 className="w-max text-4xl font-bold text-silver">NEW COLLECTION</h3>
+          <h3 className="w-max text-4xl text-silver">NEW COLLECTION</h3>
           <div className="h-[1px] w-[40%] bg-silver" />
         </div>
 

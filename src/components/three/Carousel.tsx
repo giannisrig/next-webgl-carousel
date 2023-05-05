@@ -7,7 +7,7 @@ import { lerp, getPyramidIndex } from "@/libs/utils/carouselHelper";
 import images from "@/libs/constants/images";
 import { Object3D } from "three";
 import { RootState, useAppDispatch, useAppSelector } from "@/libs/store/store";
-import { setWebglCarouselActivePlane } from "@/slices/webglCarouselSlice";
+import { setWebglCarouselActivePlane, setPlanesEdges, setMoving } from "@/slices/webglCarouselSlice";
 
 const planeSettings = {
   width: 2,
@@ -110,6 +110,7 @@ const Carousel = () => {
     if (activePlane !== null) return;
     isDown.current = true;
     startX.current = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+    dispatch(setMoving(true));
   };
 
   /*--------------------
@@ -117,6 +118,23 @@ const Carousel = () => {
   --------------------*/
   const handleUp = () => {
     isDown.current = false;
+
+    const threeCarousel: Object3D = carousel.current;
+
+    const pyramidIndex: number = getPyramidIndex(
+      threeCarousel.children,
+      Math.floor((progress.current / 100) * (threeCarousel.children.length - 1))
+    );
+
+    const data: number[] = [];
+    threeCarousel.children.forEach((item, index) => {
+      // console.log("Item: " + index, item.position.x);
+      if (Math.abs(pyramidIndex[index] - threeCarousel.children.length) > 2) {
+        data.push(index);
+      }
+    });
+    dispatch(setPlanesEdges(data));
+    dispatch(setMoving(false));
   };
 
   /*--------------------
