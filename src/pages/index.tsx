@@ -1,69 +1,52 @@
-import Image from "next/image";
 import Layout from "@/components/layout/Layout";
 import Head from "next/head";
-import PageSectionContainer from "@/components/common/section/PageSectionContainer";
+import { Suspense, useEffect, useRef } from "react";
+import { Canvas } from "@react-three/fiber";
+import Carousel from "@/components/three/Carousel";
+import { RootState, useAppSelector } from "@/libs/store/store";
+import gsap from "gsap";
 
 export default function Home() {
+  const mainTitle = useRef();
+  const activePlane = useAppSelector((state: RootState) => state.webglCarousel.activePlane);
+
+  // This code will run once when the carousel component is rendered
+  useEffect(() => {
+    gsap.to(mainTitle.current, {
+      opacity: activePlane === null ? 1 : 0,
+      x: activePlane === null ? 0 : 100,
+      duration: 0.4,
+      delay: activePlane === null ? 0.5 : 0,
+      ease: "power3.out",
+    });
+  }, [activePlane]);
+
   return (
     <Layout>
       <Head>
         <title>NextJS: Starter Template | Demo Project by Giannis Riganas</title>
         <meta name="description" content="A starter demo app built with Next.js" />
       </Head>
-      <PageSectionContainer>
-        <div className="flex w-full flex-col items-center justify-center gap-30px">
-          <div className="next-logo relative flex h-[300px] w-[300px] place-items-center items-center justify-center after:absolute after:right-1/2 after:-z-20 after:h-[240px] after:w-[240px] after:translate-x-2/4 after:blur-2xl after:content-['']">
-            <Image
-              className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70]"
-              src="/next.svg"
-              alt="Next.js Logo"
-              width={180}
-              height={37}
-              priority
-            />
-          </div>
-          <p className="flex w-full justify-center border-b border-amethyst bg-mirage pb-6 pt-8 text-green backdrop-blur-2xl lg:static lg:w-auto  lg:rounded-xl lg:border lg:p-4 ">
-            <code className="font-mono font-bold">
-              npx create-next-app --e https://github.com/giannisrig/next-core-template YOUR_APP_NAME
-            </code>
-          </p>
-          <div className={"flex w-full items-center justify-center gap-50px"}>
-            <a
-              href="https://github.com/giannisrig/next-core-template"
-              target="_blank"
-              className="fixed left-0 top-0 flex flex w-full items-center justify-center gap-10px border-b border-amethyst bg-mirage pb-6 pt-8 text-pink backdrop-blur-2xl lg:static lg:w-auto  lg:rounded-xl lg:border lg:p-4 "
-            >
-              <Image src="/github.svg" alt="Github Logo" width={20} height={20} priority />
-              <span>
-                View repository on&nbsp;
-                <code className="font-mono font-bold">Github</code>
-              </span>
-            </a>
-            <a
-              href="https://github.com/giannisrig/next-core-template/generate"
-              target="_blank"
-              className="fixed left-0 top-0 flex flex w-full items-center justify-center gap-10px border-b border-amethyst bg-mirage pb-6 pt-8 text-pink backdrop-blur-2xl lg:static lg:w-auto  lg:rounded-xl lg:border lg:p-4 "
-            >
-              <Image src="/github.svg" alt="Github Logo" width={20} height={20} priority />
-              <span>
-                Generate from&nbsp;
-                <code className="font-mono font-bold">Github</code>
-              </span>
-            </a>
-            <a
-              href="https://vercel.com/import/git?s=https://github.com/giannisrig/next-core-template"
-              target="_blank"
-              className="fixed left-0 top-0 flex flex w-full items-center justify-center gap-10px border-b border-amethyst bg-mirage pb-6 pt-8 text-pink backdrop-blur-2xl lg:static lg:w-auto  lg:rounded-xl lg:border lg:p-4 "
-            >
-              <Image src="/images/demo/vercel.svg" alt="Vercel Logo" width={20} height={20} priority />
-              <span>
-                Deploy on&nbsp;
-                <code className="font-mono font-bold">Vercel</code>
-              </span>
-            </a>
-          </div>
+      <div className="relative h-screen">
+        <h1
+          className="absolute left-1/2 top-1/2 z-3 w-max translate-x-[-50%] translate-y-[-50%] text-8xl font-bold text-white mix-blend-difference"
+          ref={mainTitle}
+        >
+          Redefine your Style
+        </h1>
+        {/*<h3 className="font-outline-2 w-max text-9xl font-bold text-transparent">Redefine your Style</h3>*/}
+        <div />
+        <div className="absolute top-120px flex w-full  items-center gap-10px px-15px">
+          <h3 className="w-max text-4xl font-bold text-silver">NEW COLLECTION</h3>
+          <div className="h-[1px] w-[40%] bg-silver" />
         </div>
-      </PageSectionContainer>
+
+        <Canvas>
+          <Suspense fallback={null}>
+            <Carousel />
+          </Suspense>
+        </Canvas>
+      </div>
     </Layout>
   );
 }
