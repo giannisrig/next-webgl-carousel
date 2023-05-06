@@ -5,9 +5,11 @@ import ImagePlane from "./ImagePlane";
 import { Object3D } from "three";
 import { useAppDispatch, useAppSelector, RootState } from "@/libs/store/store";
 import { setWebglCarouselActivePlane } from "@/slices/webglCarouselSlice";
+import { setCustomCursorHover, setCustomCursorText } from "@/slices/customCursorSlice";
 
 const CarouselItem = ({ index, width, height, activePlane, item, initialized }) => {
-  const planesEdges = useAppSelector((state: RootState) => state.webglCarousel.planesEdges);
+  const selector = useAppSelector;
+  const planesEdges = selector((state: RootState) => state.webglCarousel.planesEdges);
   const dispatch = useAppDispatch();
   const carouselItem = useRef(null);
   const [hover, setHover] = useState(false);
@@ -50,14 +52,23 @@ const CarouselItem = ({ index, width, height, activePlane, item, initialized }) 
   Hover effect
   ------------------------------*/
   useEffect(() => {
+    // Update the state for the custom cursor hover
+    dispatch(setCustomCursorHover(hover));
+
+    // Update the state for the Custom Cursor Text
+    dispatch(setCustomCursorText(hover ? "View" : "Drag"));
+
+    // Set the hover scale
     const hoverScale = hover && !isActive ? 1.1 : 1;
+
+    // Apply the animation with gsap
     gsap.to(carouselItem.current.scale, {
       x: hoverScale,
       y: hoverScale,
       duration: 0.5,
       ease: "power3.out",
     });
-  }, [hover, isActive]);
+  }, [dispatch, hover, isActive]);
 
   const handleClose = (e) => {
     e.stopPropagation();

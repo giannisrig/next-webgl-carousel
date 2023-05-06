@@ -3,11 +3,13 @@ import Head from "next/head";
 import { Suspense, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import Carousel from "@/components/three/Carousel";
-import { RootState, useAppSelector } from "@/libs/store/store";
+import { RootState, useAppDispatch, useAppSelector } from "@/libs/store/store";
 import gsap from "gsap";
+import { setCustomCursorText } from "@/slices/customCursorSlice";
 
 export default function Home() {
   const mainTitle = useRef();
+  const dispatch = useAppDispatch();
   const activePlane = useAppSelector((state: RootState) => state.webglCarousel.activePlane);
 
   // This code will run once when the carousel component is rendered
@@ -21,15 +23,20 @@ export default function Home() {
     });
   }, [activePlane]);
 
+  const handleOver = () => {
+    // Update the state for the Custom Cursor Text
+    dispatch(setCustomCursorText(null));
+  };
+
   return (
     <Layout>
       <Head>
         <title>NextJS: Starter Template | Demo Project by Giannis Riganas</title>
         <meta name="description" content="A starter demo app built with Next.js" />
       </Head>
-      <div className="relative h-screen">
+      <div className="relative h-screen" onMouseLeave={handleOver}>
         <h1
-          className="absolute left-1/2 top-1/2 z-3 w-max translate-x-[-50%] translate-y-[-50%] text-8xl font-bold text-white mix-blend-difference"
+          className="pointer-events-none absolute left-1/2 top-1/2 z-3 w-max translate-x-[-50%] translate-y-[-50%] text-8xl font-bold text-white mix-blend-difference"
           ref={mainTitle}
         >
           Redefine your Style

@@ -8,6 +8,7 @@ import images from "@/libs/constants/images";
 import { Object3D } from "three";
 import { RootState, useAppDispatch, useAppSelector } from "@/libs/store/store";
 import { setWebglCarouselActivePlane, setPlanesEdges, setMoving } from "@/slices/webglCarouselSlice";
+import { setCustomCursorText } from "@/slices/customCursorSlice";
 
 const planeSettings = {
   width: 2,
@@ -104,6 +105,14 @@ const Carousel = () => {
   });
 
   /*--------------------
+  Handle Over
+  --------------------*/
+  const handleOver = () => {
+    // Update the state for the Custom Cursor Text
+    dispatch(setCustomCursorText("Drag"));
+  };
+
+  /*--------------------
   Handle Down
   --------------------*/
   const handleDown = (e) => {
@@ -195,7 +204,7 @@ const Carousel = () => {
   }, [dispatch, initialized]);
 
   return (
-    <group>
+    <group onPointerEnter={handleOver}>
       <mesh
         ref={mesh}
         position={[0, 0, -0.01]}

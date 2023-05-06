@@ -3,12 +3,14 @@ import { combineReducers, Reducer } from "@reduxjs/toolkit";
 import mobileMenuReducer from "@/slices/mobileMenuSlice";
 import overlayReducer from "@/slices/overlaySlice";
 import webglCarouselReducer from "@/slices/webglCarouselSlice";
+import customCursorReducer from "@/slices/customCursorSlice";
 
 // Define your reducers here
 const rootReducer: Reducer = combineReducers({
   mobileMenu: mobileMenuReducer,
   overlay: overlayReducer,
   webglCarousel: webglCarouselReducer,
+  customCursor: customCursorReducer,
 });
 
 const combinedReducer = (state: any, action: any) => {
