@@ -16,7 +16,7 @@ const ImagePlane = ({ texture, texture2, width, height, active, edge, hover, ...
   const planeTexture: Texture | Texture[] = useTexture<string | string[]>(texture);
 
   //transparent image
-  const transparentImg = "/images/carousel/21.jpg";
+  const transparentImg = "/images/carousel/0.png";
 
   // Get the viewport:Size from ThreeJs
   const { viewport } = useThree();

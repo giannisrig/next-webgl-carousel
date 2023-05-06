@@ -10,7 +10,6 @@ const CarouselItem = ({ index, width, height, activePlane, item, initialized }) 
   const planesEdges = useAppSelector((state: RootState) => state.webglCarousel.planesEdges);
   const dispatch = useAppDispatch();
   const carouselItem = useRef(null);
-  const blurPlane = useRef(null);
   const [hover, setHover] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [onTheEdge, setOnTheEdge] = useState(false);
