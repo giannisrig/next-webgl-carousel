@@ -1,22 +1,27 @@
 import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
-import { RootState, useAppDispatch, useAppSelector } from "@/libs/store/store";
+import { RootState, useAppSelector } from "@/libs/store/store";
+import { TypedUseSelectorHook } from "react-redux";
 
 export default function CustomCursor() {
   // The ref item for the circle follower of the cursor
   const cursorFollower = useRef(null);
-  const [extraClass, setExtraClass] = useState("bg-white  text-black mix-blend-difference");
-  // Dispatch store
-  const dispatch = useAppDispatch();
-  const selector = useAppSelector;
-  const hover = selector((state: RootState) => state.customCursor.hover);
-  const text = selector((state: RootState) => state.customCursor.text);
+
+  // Component state for the css classes
+  const [extraClass, setExtraClass] = useState("bg-white text-black mix-blend-difference");
+  const [text, setText] = useState(null);
+
+  // Redux state selector
+  const selector: TypedUseSelectorHook<RootState> = useAppSelector;
+
+  // Redux state
   const activePlane = selector((state: RootState) => state.webglCarousel.activePlane);
+  const hoveredPlane = selector((state: RootState) => state.webglCarousel.hoveredPlane);
+  const isInteracting = selector((state: RootState) => state.webglCarousel.interacting);
 
   useEffect(() => {
     gsap.set(cursorFollower.current, { xPercent: -50, yPercent: -50 });
 
-    const ball = cursorFollower.current;
     const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     const mouse = { x: pos.x, y: pos.y };
 
@@ -31,13 +36,24 @@ export default function CustomCursor() {
     });
   });
 
-  useEffect(() => {
+  const cursorHover = (hoverState) => {
     gsap.to(cursorFollower.current, {
-      scale: hover ? 2 : 1,
+      scale: hoverState ? 2 : 1,
     });
+  };
 
-    setExtraClass(hover ? "bg-black text-white" : "bg-white  text-black mix-blend-difference");
-  }, [hover]);
+  useEffect(() => {
+    cursorHover(hoveredPlane);
+    setText(hoveredPlane ? "VIEW" : "DRAG");
+    setExtraClass(hoveredPlane ? "bg-white text-black" : "bg-black text-white");
+  }, [hoveredPlane]);
+
+  useEffect(() => {
+    setText(isInteracting ? "DRAG" : null);
+    setExtraClass(
+      isInteracting ? "bg-black text-white" : "bg-transparent border border-black max-h-[20px] max-w-[20px]"
+    );
+  }, [isInteracting]);
 
   useEffect(() => {
     gsap.to(cursorFollower.current, {
@@ -49,7 +65,7 @@ export default function CustomCursor() {
     <div
       id={"cursorFollower"}
       ref={cursorFollower}
-      className={`pointer-events-none fixed left-0 top-0 z-90 flex h-[70px] w-[70px] items-center justify-center rounded-full text-center ${extraClass}`}
+      className={`pointer-events-none fixed left-0 top-0 z-90 flex h-[60px] w-[60px] items-center justify-center rounded-full text-center transition-colors duration-200 ${extraClass}`}
     >
       {text}
     </div>

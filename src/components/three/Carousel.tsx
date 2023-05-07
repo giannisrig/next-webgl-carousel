@@ -1,20 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { usePrevious } from "react-use";
 import gsap from "gsap";
 import CarouselItem from "@/components/three/CarouselItem";
 import { lerp, getPyramidIndex } from "@/libs/utils/carouselHelper";
 import images from "@/libs/constants/images";
-import { Object3D } from "three";
+import { Object3D, Texture } from "three";
 import { RootState, useAppDispatch, useAppSelector } from "@/libs/store/store";
-import { setWebglCarouselActivePlane, setPlanesEdges, setMoving } from "@/slices/webglCarouselSlice";
-import { setCustomCursorText } from "@/slices/customCursorSlice";
-
-const planeSettings = {
-  width: 2,
-  height: 5,
-  gap: 0.3,
-};
+import { setWebglCarouselActivePlane, setPlanesEdges, setMoving, setInitialized } from "@/slices/webglCarouselSlice";
+import { useTexture } from "@react-three/drei";
+import planeSettings from "@/libs/constants/planeSettings";
+import { TypedUseSelectorHook } from "react-redux";
 
 const Carousel = () => {
   // Get the viewport from ThreeJS
@@ -26,12 +21,11 @@ const Carousel = () => {
 
   // Dispatch for the Redux state
   const dispatch = useAppDispatch();
-  const speedDrag = -0.1;
+  const selector: TypedUseSelectorHook<RootState> = useAppSelector;
 
   // Set state vars
-  const activePlane = useAppSelector((state: RootState) => state.webglCarousel.activePlane);
-  const [initialized, setInitialized] = useState(false);
-  const prevActivePlane = usePrevious(activePlane);
+  const activePlane = selector((state: RootState) => state.webglCarousel.activePlane);
+  const initialized = selector((state: RootState) => state.webglCarousel.initialized);
 
   // Define refs for the vars needed for the functionality
   // Note that is not recommended to use state vars in the useFrame() hook
@@ -41,6 +35,10 @@ const Carousel = () => {
   const isDown = useRef(false);
   const progress = useRef(0);
   const oldProgress = useRef(0);
+
+  // Load our global Textures that will be used in all carousel items
+  const transparentTexture: Texture | Texture[] = useTexture<string | string[]>(planeSettings.transparentImage);
+  const distortedTexture: Texture | Texture[] = useTexture<string | string[]>(planeSettings.distortedImage);
 
   const displayItems = (item: Object3D, index: number, active: number) => {
     // If the current ref item is empty return
@@ -105,14 +103,6 @@ const Carousel = () => {
   });
 
   /*--------------------
-  Handle Over
-  --------------------*/
-  const handleOver = () => {
-    // Update the state for the Custom Cursor Text
-    dispatch(setCustomCursorText("Drag"));
-  };
-
-  /*--------------------
   Handle Down
   --------------------*/
   const handleDown = (e) => {
@@ -153,7 +143,7 @@ const Carousel = () => {
     if (activePlane !== null || !isDown.current) return;
 
     const x = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-    const mouseProgress = (x - startX.current) * speedDrag;
+    const mouseProgress = (x - startX.current) * planeSettings.speedDrag;
     progress.current = progress.current + mouseProgress;
     direction.current = x > startX.current ? "left" : "right";
     // console.log(progress.current);
@@ -162,49 +152,43 @@ const Carousel = () => {
 
   // This hook runs every time the activePlane is updated
   useEffect(() => {
-    // If the current ref item is empty return
-    if (!carousel.current) {
+    // If the current ref item is empty return and there's no active plane, then return
+    if (!carousel.current || activePlane === null) {
       return;
     }
 
     // Define our ThreeJs Carousel
     const threeCarousel: Object3D = carousel.current;
 
-    // Make sure there's an active plane
-    if (activePlane !== null && prevActivePlane === null) {
-      // Calculate the progress.current based on activePlane
-      progress.current = (activePlane / (threeCarousel.children.length - 1)) * 100;
-    }
-  }, [activePlane, prevActivePlane]);
+    // Calculate the progress.current based on activePlane
+    progress.current = (activePlane / (threeCarousel.children.length - 1)) * 100;
+  }, [activePlane]);
 
   // This code will run once when the carousel component is rendered
   useEffect(() => {
-    // If the current ref item is empty return
-    if (!carousel.current) {
+    // If the current ref item is empty or initialized true, return
+    if (!carousel.current || initialized) {
       return;
     }
 
     // Define our ThreeJs Carousel
     const threeCarousel: Object3D = carousel.current;
 
-    // If the carousel is not initialized
-    if (!initialized) {
-      // Set the active plane as the middle carousel item
-      dispatch(setWebglCarouselActivePlane(threeCarousel.children.length / 2));
+    // Set the active plane as the middle carousel item
+    dispatch(setWebglCarouselActivePlane(threeCarousel.children.length / 2));
 
-      // After 300 ms
-      setTimeout(() => {
-        // Set the active plane to null
-        dispatch(setWebglCarouselActivePlane(null));
+    // After 300 ms
+    setTimeout(() => {
+      // Set the active plane to null
+      dispatch(setWebglCarouselActivePlane(null));
 
-        // Se the initialized state to true
-        setInitialized(true);
-      }, 300);
-    }
+      // Se the initialized state to true
+      dispatch(setInitialized(true));
+    }, 300);
   }, [dispatch, initialized]);
 
   return (
-    <group onPointerEnter={handleOver}>
+    <group>
       <mesh
         ref={mesh}
         position={[0, 0, -0.01]}
@@ -220,13 +204,11 @@ const Carousel = () => {
       <group ref={carousel}>
         {images.map((item, i) => (
           <CarouselItem
-            width={planeSettings.width}
-            height={planeSettings.height}
-            activePlane={activePlane}
-            key={item.image}
-            item={item}
+            key={i}
+            transparentTexture={transparentTexture}
+            distortedTexture={distortedTexture}
+            image={item.image}
             index={i}
-            initialized={initialized}
           />
         ))}
       </group>
